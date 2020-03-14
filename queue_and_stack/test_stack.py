@@ -16,15 +16,12 @@ class Stack:
         self.size += 1
 
     def pop(self):
-        if self.size == 0:
-            return
-        else:
-            self.size -= 1
-            return self.storage.remove_from_tail()
+        if self.size >= 0:
+             self.size -= 1
+        return self.storage.remove_from_tail()
 
     def len(self):
         return self.size
-
 
 class QueueTests(unittest.TestCase):
     def setUp(self):
