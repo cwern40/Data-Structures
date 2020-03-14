@@ -22,9 +22,11 @@ class LRUCache:
     key-value pair doesn't exist in the cache.
     """
     def get(self, key):
-        item = self.storage.get(key, "")
-        self.storage.pop(key)
-        self.storage.update(key=item)
+        item = self.storage.get(key, None)
+        new_key = {key: item}
+        if item is not None:
+            self.storage.pop(key)
+            self.storage.update(new_key)
         return item
 
     """
@@ -38,13 +40,19 @@ class LRUCache:
     the newly-specified value.
     """
     def set(self, key, value):
+        item = {key: value}
+        same = False
+        if self.size == 0:
+            self.size += 1
+            return self.storage.update(item)
         for current_key in self.storage:
             if key == current_key:
-                self.storage.update(key=value)
-            elif self.size == 10:
-                self.storage.pop(list(self.storage.keys())[0])
-                self.storage.update(key=value)
-            else:
-                self.storage.update(key=value)
-                self.size += 1
-
+                same = True
+        if same:
+           return self.storage.update(item) 
+        elif self.size == self.limit:
+            self.storage.pop(list(self.storage.keys())[0])
+            return self.storage.update(item)
+        else:
+            self.size += 1
+            return self.storage.update(item)
