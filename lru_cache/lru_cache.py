@@ -9,9 +9,9 @@ class LRUCache:
     """
     def __init__(self, limit=10):
         self.limit = limit
-        self.list = DoublyLinkedList()
         self.storage = {}
         self.size = 0
+        self.order = DoublyLinkedList()
 
 
     """
@@ -22,12 +22,18 @@ class LRUCache:
     key-value pair doesn't exist in the cache.
     """
     def get(self, key):
-        item = self.storage.get(key, None)
-        new_key = {key: item}
-        if item is not None:
-            self.storage.pop(key)
-            self.storage.update(new_key)
-        return item
+        # item = self.storage.get(key, None)
+        # if item is not None:
+        #     new_key = {key: item}
+        #     self.storage.pop(key)
+        #     self.storage.update(new_key)
+        # return item
+        if key in self.storage:
+            node = self.storage[key]
+            self.order.move_to_front(node)
+            return node.value[1]
+        else:
+            return None
 
     """
     Adds the given key-value pair to the cache. The newly-
@@ -40,19 +46,32 @@ class LRUCache:
     the newly-specified value.
     """
     def set(self, key, value):
-        item = {key: value}
-        same = False
-        if self.size == 0:
-            self.size += 1
-            return self.storage.update(item)
-        for current_key in self.storage:
-            if key == current_key:
-                same = True
-        if same:
-           return self.storage.update(item) 
-        elif self.size == self.limit:
-            self.storage.pop(list(self.storage.keys())[0])
-            return self.storage.update(item)
-        else:
-            self.size += 1
-            return self.storage.update(item)
+        # item = {key: value}
+        # same = False
+        # if self.size == 0:
+        #     self.size += 1
+        #     return self.storage.update(item)
+        # for current_key in self.storage:
+        #     if key == current_key:
+        #         same = True
+        # if same:
+        #    return self.storage.update(item) 
+        # elif self.size == self.limit:
+        #     self.storage.pop(list(self.storage.keys())[0])
+        #     return self.storage.update(item)
+        # else:
+        #     self.size += 1
+        #     return self.storage.update(item)
+        if key in self.storage:
+            node = self.storage[key]
+            node.value = (key, value)
+            self.order.move_to_front(node)
+            return
+        if self.size == self.limit:
+            del self.storage[self.order.tail.value[0]]
+            self.order.remove_from_tail()
+            self.size -= 1
+        
+        self.order.add_to_head((key, value))
+        self.storage[key] = self.order.head
+        self.size += 1        
