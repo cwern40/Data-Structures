@@ -1,9 +1,46 @@
 import sys
-sys.path.append('../queue_and_stack')
+sys.path.append('./queue_and_stack')
+from doubly_linked_list import DoublyLinkedList
 # from dll_queue import Queue
 # from dll_stack import Stack
 
+class Queue:
+    def __init__(self):
+        self.size = 0
+        self.storage = DoublyLinkedList()
+        # Why is our DLL a good choice to store our elements?
+        # self.storage = ?
 
+    def enqueue(self, value):
+        self.storage.add_to_tail(value)
+        self.size += 1
+
+    def dequeue(self):
+        if self.size >= 1:
+             self.size -= 1
+        return self.storage.remove_from_head()
+            
+    def len(self):
+        return self.size
+
+class Stack:
+    def __init__(self):
+        self.size = 0
+        self.storage = DoublyLinkedList()
+        # Why is our DLL a good choice to store our elements?
+        # self.storage = ?
+
+    def push(self, value):
+        self.storage.add_to_tail(value)
+        self.size += 1
+
+    def pop(self):
+        if self.size > 0:
+             self.size -= 1
+        return self.storage.remove_from_tail()
+
+    def len(self):
+        return self.size
 class BinarySearchTree:
     def __init__(self, value):
         self.value = value
@@ -65,17 +102,48 @@ class BinarySearchTree:
     # Print all the values in order from low to high
     # Hint:  Use a recursive, depth first traversal
     def in_order_print(self, node):
-        pass
+        if node.left is not None:
+            self.in_order_print(node.left)
+        
+        print(node.value)
+
+        if node.right is not None:
+            node.in_order_print(node.right)
 
     # Print the value of every node, starting with the given node,
     # in an iterative breadth first traversal
     def bft_print(self, node):
-        pass
+        queue = Queue()
+        queue.enqueue(node.value)
+        current_nodes = [node]
+        next_nodes = []
+
+        while queue.len() is not 0:
+            for value in current_nodes:
+                if value.left is not None:
+                    next_nodes.append(value.left)
+                    queue.enqueue(value.left.value)
+                if value.right is not None:
+                    next_nodes.append(value.right)
+                    queue.enqueue(value.right.value)
+                queue.dequeue()
+            current_nodes = next_nodes
+            next_nodes = []
 
     # Print the value of every node, starting with the given node,
     # in an iterative depth first traversal
     def dft_print(self, node):
+        queue = Queue()
+        queue.enqueue(node.value)
+        
         pass
+        # print(node.value)
+
+        # if node.left is not None:
+        #     self.dft_print(node.left)
+
+        # if node.right is not None:
+        #     self.dft_print(node.right)
 
     # STRETCH Goals -------------------------
     # Note: Research may be required
